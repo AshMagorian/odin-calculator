@@ -1,0 +1,27 @@
+#container
+{
+    background-color: aqua;
+    width: 200px;
+    padding: 10px;
+}
+
+.display
+{
+    font-size: 48px;
+    background-color:darkgrey;
+    margin-bottom: 5px;
+    text-align: right;
+    padding-right: 5px;
+}
+
+button
+{
+    font-size: 36px;
+    width: 45px;
+    margin-bottom: 5px;
+}
+
+#clear
+{
+    width: 70px;
+}

@@ -10,6 +10,8 @@ let clearOnNextNumPress = true;
 
 function operate(n1, n2, operator)
 {
+    if (n1 === null || n2 === null)
+        return "Error";
     switch(operator)
     {
         case "+": return add(n1, n2); break;
@@ -32,11 +34,30 @@ function resetDisplay()
     clearOnNextNumPress = true;
 }
 
+function roundDisplay()
+{
+    let numLength = display.textContent.length;
+    let n = Number(display.textContent);
+    if (numLength > 7)
+    {
+        let digitsBeforeDecimal = Math.round(n).toString().length;
+        if (digitsBeforeDecimal > 7)
+        {
+            display.textContent = "Number too large";
+            return;
+        }
+        let decimalPlaces = 7 - digitsBeforeDecimal;
+        n = Math.round(n * Math.pow(10, decimalPlaces)) / Math.pow(10, decimalPlaces);
+        display.textContent = n;
+    }
+}
+
 function resetValues()
 {
     n1 = null;
     n2 = null;
     operator = null;
+    clearOnNextNumPress = true;
 }
 
 function checkClear()
@@ -46,6 +67,17 @@ function checkClear()
         clearDisplay();
         clearOnNextNumPress = false;
     }
+}
+
+function decimalCheck()
+{
+    let num = display.textContent;
+    for (let digit of num)
+    {
+        if (digit == ".")
+            return;
+    }
+    display.textContent+= ".";
 }
 
 function storeOperator(n, _operator)
@@ -60,6 +92,7 @@ function storeOperator(n, _operator)
         n2 = Number(display.textContent);
         display.textContent = operate(n1, n2, operator);
         storeFirstNumber(operate(n1, n2, operator));
+        n2 = null;
         clearOnNextNumPress = true;
     }   
     operator = _operator;
@@ -90,12 +123,20 @@ container.addEventListener("click", (event) => {
         case "7":checkClear(); display.textContent+= "7"; break;
         case "8":checkClear(); display.textContent+= "8"; break;
         case "9":checkClear(); display.textContent+= "9"; break;
-        case "decimal":checkClear(); display.textContent+= "."; break;
+        case "decimal":checkClear(); decimalCheck();  break;
         case "add":storeOperator(display.textContent, "+"); break;
         case "subtract":storeOperator(display.textContent, "-"); break;
         case "multiply":storeOperator(display.textContent, "*"); break;
         case "divide":storeOperator(display.textContent, "/"); break;
-        case "equals":n2 = Number(display.textContent);display.textContent = operate(n1, n2, operator); resetValues(); break;
+        case "equals":
+            {
+                checkClear();
+                n2 = Number(display.textContent);
+                display.textContent = operate(n1, n2, operator);
+                roundDisplay();
+                resetValues(); 
+                break;
+            } 
     }
     let test = event.target.id;
 })
